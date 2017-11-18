@@ -12,11 +12,15 @@ class App:
     def __init__(self):
         self.root = tk.Tk()
         self.dir = Path(os.path.abspath(__file__)).parent
-        self.settings = toml.load(os.path.join(Path(os.path.abspath(__file__)).parent, "settings.toml"))
+        self.settings = toml.load(os.path.join(self.dir, "settings.toml"))
         self.lang = toml.load(
-            os.path.join(Path(os.path.abspath(__file__)).parent, "lang", f"{self.settings['language']}.toml")
+            os.path.join(self.dir, "lang", f"{self.settings['language']}.toml")
         )
-        if not self.settings['default_save_path']:
+        self.savepath = self.settings.get('default_save_path')
+        if self.savepath == "":
+            self.savepath = os.path.join(self.dir, 'dl')
+        if not Path(self.savepath).exists():
+            os.makedirs(self.savepath)
             
         self.root.title(self.lang['title'])
 
@@ -56,6 +60,8 @@ class App:
             }],
             'logger': MyLogger(),
             'progress_hooks': [my_hook],
+            'outtmpl': os.path.join(self.savepath, "%(title)s.%(ext)s"),
+            'download_archive': 'downloaded_songs.txt',
         }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download(videos)
