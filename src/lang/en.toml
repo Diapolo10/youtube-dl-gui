@@ -1,0 +1,6 @@
+title = "YouTube-downloader-tkinter, Lari Liuhamo @2017"
+url_box = "Video URLs"
+dl_button = "Start download"
+quit_button = "Quit"
+dl_complete = "Done downloading, now converting ..."
+convert_complete = "File format converted successfully"
