@@ -7,3 +7,8 @@ Run src/main.py, add as many YouTube video/playlist URLs on the list as you want
 ## Currently supported languages
 - Finnish (fi)
 - English (en)
+
+## Upcoming features
+- Button to open download directory
+- Toggle between downloading video or just audio
+- Selecting download directory from GUI
