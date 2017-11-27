@@ -1,0 +1,6 @@
+title = "YouTube-lataaja, Lari Liuhamo @2017"
+url_box = "Video URLs"
+dl_button = "Lataa videot"
+quit_button = "Exit"
+dl_complete = "Lataus suoritettu, muutetaan tiedostomuotoa ..."
+convert_complete = "Tiedostomuoto muutettu onnistuneesti"

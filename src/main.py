@@ -7,31 +7,92 @@ import toml
 import youtube_dl
 
 
+class App(tk.Frame):
+    def __init__(self, master=None, *args, **kwargs):
+        tk.Frame.__init__(self, master, *args, **kwargs)
+        self.init_gui()
 
-class App:
-    def __init__(self):
-        self.root = tk.Tk()
+    def init_gui(self, *args, **kwargs):
+
         self.dir = Path(os.path.abspath(__file__)).parent
         self.settings = toml.load(os.path.join(self.dir, "settings.toml"))
+        self.language = tk.StringVar()
+        self.language.set(self.settings['language'].capitalize())
         self.lang = toml.load(
-            os.path.join(self.dir, "lang", f"{self.settings['language']}.toml")
+            os.path.join(self.dir, "lang", f"{self.language.get()}.toml")
         )
         self.savepath = self.settings.get('default_save_path')
         if self.savepath == "":
             self.savepath = os.path.join(self.dir, 'dl')
         if not Path(self.savepath).exists():
             os.makedirs(self.savepath)
-            
-        self.root.title(self.lang['title'])
+
+        self.LANG_OPTIONS = (
+            "Suomi",
+            "English",
+        )
+
+        # App settings
+        self.output_type = tk.StringVar()
+        self.output_type.set(self.settings.get('output_type', 'video'))
+        self.output_type.trace('w', self.config_update)
+
+        self.language.trace('w', self.config_update)
+
+        # Set window title
+        self.master.title(self.lang['title'])
+
+        # Create toolbar
+        toolbar = tk.Menu(self.master)
+        self.master.config(menu=toolbar)
+
+        file_menu = tk.Menu(toolbar)
+        file_menu.add_command(label="Settings",command=self.config_window)
+        file_menu.add_command(label=self.lang['quit_button'], command=self.master.destroy)
+        toolbar.add_cascade(label="File", menu=file_menu)
+
+        help_menu = tk.Menu(toolbar)
+        help_menu.add_command(label="About", command=None)
+        help_menu.add_command(label="Usage", command=None)
+        help_menu.add_command(label="License",command=None)
+        toolbar.add_cascade(label="Help", menu=help_menu)
+
 
         # Add buttons and text fields
-        tk.Label(self.root, text=self.lang['url_box']).grid(row=0)
-        self.entry = tk.Text(self.root)
+        tk.Label(self.master, text=self.lang['url_box']).grid(row=0)
+        self.entry = tk.Text(self.master)
         self.entry.grid(row=0, column=1)
 
-        tk.Button(self.root, text=self.lang['dl_button'], command=self.downloader).grid(row=1, column=0, sticky=tk.W, pady=4)
-        tk.Button(self.root, text=self.lang['quit_button'], command=self.root.destroy).grid(row=1, column=1, sticky=tk.W, pady=4)
+        tk.Button(self.master, text=self.lang['dl_button'], command=self.downloader).grid(row=1, column=0, sticky=tk.W, pady=4)
+        tk.Button(self.master, text=self.lang['quit_button'], command=self.master.destroy).grid(row=1, column=1, sticky=tk.W, pady=4)
 
+    def config_window(self):
+        t = tk.Toplevel(self)
+        t.wm_title("YDL Settings")
+        t.grid()
+
+        tk.Label(t, text="Output (video/audio):").grid(row=0, column=0)
+        tk.Radiobutton(t, text="Video", variable=self.output_type, value='video').grid(row=0, column=1)
+        tk.Radiobutton(t, text="Audio-only", variable=self.output_type, value='audio').grid(row=0, column=2)
+
+        tk.Label(t, text="Language:").grid(row=1, column=0)
+        #self.temp_lang = tk.StringVar()
+        #self.temp_lang.set('English')
+        #self.temp_lang.trace('w', self.config_update)
+        #tk.OptionMenu(t, variable=self.temp_lang, *self.LANG_OPTIONS).grid(row=1, column=1)
+        tk.OptionMenu(t, self.language, *self.LANG_OPTIONS).grid(row=1, column=1)
+
+    def config_update(self, *args, **kwargs):
+        #print(args, kwargs)
+        #self.settings['language'] = self.LANG_OPTIONS.get(
+        #    self.temp_lang.get() if self.temp_lang.get() is not None else 'English',
+        #    'en'
+        #)
+        self.settings['language'] = self.language.get().lower()
+        self.settings['output_type'] = self.output_type.get()
+        with open(os.path.join(self.dir, "settings.toml"), 'w') as f:
+            toml.dump(self.settings, f)
+        self.init_gui(*args,**kwargs)
 
     def downloader(self):
         videos = self.entry.get("1.0", tk.END).splitlines()
@@ -49,6 +110,8 @@ class App:
         def my_hook(d):
             if d['status'] == 'finished':
                 print(self.lang['dl_complete'])
+            if d['status'] == 'downloading':
+                print(d['filename'], d['_percent_str'], d['_eta_str'])
 
 
         ydl_opts = {
@@ -70,5 +133,5 @@ class App:
 
 
 if __name__ == "__main__":
-    App().root.mainloop()
+    App().mainloop()
     sys.exit()
