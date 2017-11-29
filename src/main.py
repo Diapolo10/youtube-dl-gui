@@ -8,10 +8,74 @@ import youtube_dl
 
 CONFIG_FILE = "settings.toml"
 
+def rClicker(e):
+    """
+    Right click context menu for all tk.Entry and tk.Text widgets
+    """
+
+    try:
+        def rClick_Copy(e, apnd=0):
+            e.widget.event_generate('<Control-c>')
+
+        def rClick_Cut(e):
+            e.widget.event_generate('<Control-x>')
+
+        def rClick_Paste(e):
+            e.widget.event_generate('<Control-v>')
+
+        e.widget.focus()
+
+        nclst=[
+               (' Cut', lambda e=e: rClick_Cut(e)),
+               (' Copy', lambda e=e: rClick_Copy(e)),
+               (' Paste', lambda e=e: rClick_Paste(e)),
+               ]
+
+        rmenu = tk.Menu(None, tearoff=0, takefocus=0)
+
+        for (txt, cmd) in nclst:
+            rmenu.add_command(label=txt, command=cmd)
+
+        rmenu.tk_popup(e.x_root+40, e.y_root+10,entry="0")
+
+    except TclError:
+        print(' - rClick menu, something wrong')
+        pass
+    return "break"
+
+def rClickbinder(r):
+
+    try:
+        for b in [ 'Text', 'Entry', 'Listbox', 'Label']: #
+            r.bind_class(b, sequence='<Button-3>',
+                         func=rClicker, add='')
+    except TclError:
+        print(' - rClickbinder, something wrong')
+        pass
+
+class MyLogger(object):
+    def debug(self, msg):
+        print(msg)
+
+    def warning(self, msg):
+        print(f"Warning: {msg}")
+
+    def error(self, msg):
+        print(f"ERROR: {msg}")
+
+
+def my_hook(d):
+    if d['status'] == 'finished':
+        print(self.lang['dl_complete'])
+    if d['status'] == 'downloading':
+        print(d['filename'], d['_percent_str'], d['_eta_str'])
+
+
 class App(tk.Frame):
     def __init__(self, master=None, *args, **kwargs):
-        tk.Frame.__init__(self, master, *args, **kwargs)
-        self.init_gui()
+        tk.Frame.__init__(self, master, **kwargs)
+        self.init_gui(*args, **kwargs)
+        rClickbinder(self.master)
 
     def init_gui(self, *args, **kwargs):
 
@@ -62,6 +126,7 @@ class App(tk.Frame):
         # Add buttons and text fields
         tk.Label(self.master, text=self.lang['url_box']).grid(row=0)
         self.entry = tk.Text(self.master)
+        #self.entry.bind('<Button-3>',rClicker, add='')
         self.entry.grid(row=0, column=1)
 
         tk.Button(self.master, text=self.lang['dl_button'], command=self.downloader).grid(row=1, column=0, sticky=tk.W, pady=4)
@@ -70,6 +135,7 @@ class App(tk.Frame):
     def config_window(self):
         t = tk.Toplevel(self)
         t.wm_title(self.lang['cfg_title'])
+        t.resizable(0, 0)
         t.grid()
 
         tk.Label(t, text=self.lang['cfg_out']).grid(row=0, column=0)
@@ -97,23 +163,6 @@ class App(tk.Frame):
 
     def downloader(self):
         videos = list(filter(None, self.entry.get("1.0", tk.END).splitlines()))
-        class MyLogger(object):
-            def debug(self, msg):
-                print(msg)
-
-            def warning(self, msg):
-                print(f"Warning: {msg}")
-
-            def error(self, msg):
-                print(f"ERROR: {msg}")
-
-
-        def my_hook(d):
-            if d['status'] == 'finished':
-                print(self.lang['dl_complete'])
-            if d['status'] == 'downloading':
-                print(d['filename'], d['_percent_str'], d['_eta_str'])
-
 
         ydl_opts = {
             'format': 'bestaudio/best' if self.output_type.get() == "audio" else 'mp4',
