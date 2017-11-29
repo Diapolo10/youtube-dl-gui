@@ -64,13 +64,6 @@ class MyLogger(object):
         print(f"ERROR: {msg}")
 
 
-def my_hook(d):
-    if d['status'] == 'finished':
-        print(self.lang['dl_complete'])
-    if d['status'] == 'downloading':
-        print(d['filename'], d['_percent_str'], d['_eta_str'])
-
-
 class App(tk.Frame):
     def __init__(self, master=None, *args, **kwargs):
         tk.Frame.__init__(self, master, **kwargs)
@@ -181,6 +174,12 @@ class App(tk.Frame):
         if self.output_type.get() == "audio":
             print(self.lang['convert_complete'])
         self.entry.delete('1.0', tk.END)
+
+    def my_hook(d):
+        if d['status'] == 'finished':
+            print(self.lang['dl_complete'])
+        if d['status'] == 'downloading':
+            print(d['filename'], d['_percent_str'], d['_eta_str'])
 
 
 if __name__ == "__main__":
