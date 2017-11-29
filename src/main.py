@@ -165,7 +165,7 @@ class App(tk.Frame):
                 'preferredquality': '192',
             }] if self.output_type.get() == "audio" else [],
             'logger': MyLogger(),
-            'progress_hooks': [my_hook],
+            'progress_hooks': [self.my_hook],
             'outtmpl': os.path.join(self.savepath, "%(title)s.%(ext)s"),
             'download_archive': 'downloaded_songs.txt',
         }
@@ -175,7 +175,7 @@ class App(tk.Frame):
             print(self.lang['convert_complete'])
         self.entry.delete('1.0', tk.END)
 
-    def my_hook(d):
+    def my_hook(self, d):
         if d['status'] == 'finished':
             print(self.lang['dl_complete'])
         if d['status'] == 'downloading':
