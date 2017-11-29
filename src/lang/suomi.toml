@@ -1,6 +1,22 @@
-title = "YouTube-lataaja, Lari Liuhamo @2017"
+title = "YDL-videolataaja, Lari Liuhamo @2017"
 url_box = "Video URLs"
 dl_button = "Lataa videot"
-quit_button = "Exit"
+quit_button = "Sulje"
 dl_complete = "Lataus suoritettu, muutetaan tiedostomuotoa ..."
 convert_complete = "Tiedostomuoto muutettu onnistuneesti"
+
+tb_file = "Tiedosto"
+tb_file_cfg = "Asetukset"
+
+tb_help = "Ohje"
+tb_help_about = "Tietoja"
+tb_help_usage = "Käyttöohjeet"
+tb_help_license = "Lisenssi"
+
+cfg_title = "YDL Asetukset"
+
+cfg_out = "Ladattu tiedostomuoto (video/ääni):"
+cfg_out_vd = "Video"
+cfg_out_aud = "Pelkkä ääni"
+
+cfg_lang = "Käyttöliittymän kieli:"

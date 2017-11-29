@@ -6,6 +6,7 @@ import tkinter as tk
 import toml
 import youtube_dl
 
+CONFIG_FILE = "settings.toml"
 
 class App(tk.Frame):
     def __init__(self, master=None, *args, **kwargs):
@@ -15,7 +16,7 @@ class App(tk.Frame):
     def init_gui(self, *args, **kwargs):
 
         self.dir = Path(os.path.abspath(__file__)).parent
-        self.settings = toml.load(os.path.join(self.dir, "settings.toml"))
+        self.settings = toml.load(os.path.join(self.dir, CONFIG_FILE))
         self.language = tk.StringVar()
         self.language.set(self.settings['language'].capitalize())
         self.lang = toml.load(
@@ -47,15 +48,15 @@ class App(tk.Frame):
         self.master.config(menu=toolbar)
 
         file_menu = tk.Menu(toolbar)
-        file_menu.add_command(label="Settings",command=self.config_window)
+        file_menu.add_command(label=self.lang['tb_file_cfg'], command=self.config_window)
         file_menu.add_command(label=self.lang['quit_button'], command=self.master.destroy)
-        toolbar.add_cascade(label="File", menu=file_menu)
+        toolbar.add_cascade(label=self.lang['tb_file'], menu=file_menu)
 
         help_menu = tk.Menu(toolbar)
-        help_menu.add_command(label="About", command=None)
-        help_menu.add_command(label="Usage", command=None)
-        help_menu.add_command(label="License",command=None)
-        toolbar.add_cascade(label="Help", menu=help_menu)
+        help_menu.add_command(label=self.lang['tb_help_about'], command=None)
+        help_menu.add_command(label=self.lang['tb_help_usage'], command=None)
+        help_menu.add_command(label=self.lang['tb_help_license'], command=None)
+        toolbar.add_cascade(label=self.lang['tb_help'], menu=help_menu)
 
 
         # Add buttons and text fields
@@ -68,14 +69,14 @@ class App(tk.Frame):
 
     def config_window(self):
         t = tk.Toplevel(self)
-        t.wm_title("YDL Settings")
+        t.wm_title(self.lang['cfg_title'])
         t.grid()
 
-        tk.Label(t, text="Output (video/audio):").grid(row=0, column=0)
-        tk.Radiobutton(t, text="Video", variable=self.output_type, value='video').grid(row=0, column=1)
-        tk.Radiobutton(t, text="Audio-only", variable=self.output_type, value='audio').grid(row=0, column=2)
+        tk.Label(t, text=self.lang['cfg_out']).grid(row=0, column=0)
+        tk.Radiobutton(t, text=self.lang['cfg_out_vd'], variable=self.output_type, value='video').grid(row=0, column=1)
+        tk.Radiobutton(t, text=self.lang['cfg_out_aud'], variable=self.output_type, value='audio').grid(row=0, column=2)
 
-        tk.Label(t, text="Language:").grid(row=1, column=0)
+        tk.Label(t, text=self.lang['cfg_lang']).grid(row=1, column=0)
         #self.temp_lang = tk.StringVar()
         #self.temp_lang.set('English')
         #self.temp_lang.trace('w', self.config_update)
@@ -90,7 +91,7 @@ class App(tk.Frame):
         #)
         self.settings['language'] = self.language.get().lower()
         self.settings['output_type'] = self.output_type.get()
-        with open(os.path.join(self.dir, "settings.toml"), 'w') as f:
+        with open(os.path.join(self.dir, CONFIG_FILE), 'w') as f:
             toml.dump(self.settings, f)
         self.init_gui(*args,**kwargs)
 
