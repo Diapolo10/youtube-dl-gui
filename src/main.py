@@ -96,7 +96,7 @@ class App(tk.Frame):
         self.init_gui(*args,**kwargs)
 
     def downloader(self):
-        videos = self.entry.get("1.0", tk.END).splitlines().strip()
+        videos = list(filter(None, self.entry.get("1.0", tk.END).splitlines()))
         class MyLogger(object):
             def debug(self, msg):
                 print(msg)
