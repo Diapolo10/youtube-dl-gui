@@ -96,7 +96,7 @@ class App(tk.Frame):
         self.init_gui(*args,**kwargs)
 
     def downloader(self):
-        videos = self.entry.get("1.0", tk.END).splitlines()
+        videos = self.entry.get("1.0", tk.END).splitlines().strip()
         class MyLogger(object):
             def debug(self, msg):
                 print(msg)
@@ -116,12 +116,12 @@ class App(tk.Frame):
 
 
         ydl_opts = {
-            'format': 'bestaudio/best',
+            'format': 'bestaudio/best' if self.output_type.get() == "audio" else 'mp4',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
-            }],
+            }] if self.output_type.get() == "audio" else [],
             'logger': MyLogger(),
             'progress_hooks': [my_hook],
             'outtmpl': os.path.join(self.savepath, "%(title)s.%(ext)s"),
@@ -129,7 +129,8 @@ class App(tk.Frame):
         }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download(videos)
-        print(self.lang['convert_complete'])
+        if self.output_type.get() == "audio":
+            print(self.lang['convert_complete'])
         self.entry.delete('1.0', tk.END)
 
 
