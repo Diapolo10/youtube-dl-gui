@@ -6,7 +6,7 @@ import tkinter as tk
 import toml
 import youtube_dl
 
-from tl_manager import LangManager
+from tl_manager import LangManager, LangMenu
 
 CONFIG_FILE = "settings.toml"
 
@@ -74,7 +74,6 @@ class App(tk.Frame):
         self.init_gui(*args, **kwargs)
 
     def init_gui(self, *args, **kwargs):
-
         self.dir = Path(os.path.abspath(__file__)).parent
         self.settings = toml.load(os.path.join(self.dir, CONFIG_FILE))
         self.language_packs = os.path.join(self.dir, 'lang')
@@ -109,26 +108,26 @@ class App(tk.Frame):
         )
 
         # Create toolbar
-        toolbar = tk.Menu(self.master)
+        toolbar = LangMenu(self.master)
         self.master.config(menu=toolbar)
 
-        file_menu = tk.Menu(toolbar)
+        file_menu = LangMenu(toolbar)
         # file_menu.add_command(label=self.lang['tb_file_cfg'], command=self.config_window)
         # file_menu.add_command(label=self.lang['quit_button'], command=self.master.destroy)
         # toolbar.add_cascade(label=self.lang['tb_file'], menu=file_menu)
-        file_menu.add_command(label=self.curlang.tb_file_cfg.get(), command=self.config_window)
-        file_menu.add_command(label=self.curlang.quit_button.get(), command=self.master.destroy)
-        toolbar.add_cascade(label=self.curlang.tb_file.get(), menu=file_menu)
+        file_menu.add_command(label=self.curlang.tb_file_cfg, command=self.config_window)
+        file_menu.add_command(label=self.curlang.quit_button, command=self.master.destroy)
+        toolbar.add_cascade(label=self.curlang.tb_file, menu=file_menu)
 
-        help_menu = tk.Menu(toolbar)
+        help_menu = LangMenu(toolbar)
         # help_menu.add_command(label=self.lang['tb_help_about'], command=None)
         # help_menu.add_command(label=self.lang['tb_help_usage'], command=None)
         # help_menu.add_command(label=self.lang['tb_help_license'], command=None)
         # toolbar.add_cascade(label=self.lang['tb_help'], menu=help_menu)
-        help_menu.add_command(label=self.curlang.tb_help_about.get(), command=None)
-        help_menu.add_command(label=self.curlang.tb_help_usage.get(), command=None)
-        help_menu.add_command(label=self.curlang.tb_help_license.get(), command=None)
-        toolbar.add_cascade(label=self.curlang.tb_help.get(), menu=help_menu)
+        help_menu.add_command(label=self.curlang.tb_help_about, command=None)
+        help_menu.add_command(label=self.curlang.tb_help_usage, command=None)
+        help_menu.add_command(label=self.curlang.tb_help_license, command=None)
+        toolbar.add_cascade(label=self.curlang.tb_help, menu=help_menu)
 
 
         # Add buttons and text fields
@@ -138,10 +137,8 @@ class App(tk.Frame):
         #self.entry.bind('<Button-3>',rClicker, add='')
         self.entry.grid(row=0, column=1)
 
-        # tk.Button(self.master, text=self.lang['dl_button'], command=self.downloader).grid(row=1, column=0, sticky=tk.W, pady=4)
-        # tk.Button(self.master, text=self.lang['quit_button'], command=self.master.destroy).grid(row=1, column=1, sticky=tk.W, pady=4)
-        tk.Button(self.master, text=self.curlang.dl_button.get(), command=self.downloader).grid(row=1, column=0, sticky=tk.W, pady=4)
-        tk.Button(self.master, text=self.curlang.quit_button.get(), command=self.master.destroy).grid(row=1, column=1, sticky=tk.W, pady=4)
+        tk.Button(self.master, textvariable=self.curlang.dl_button, command=self.downloader).grid(row=1, column=0, sticky=tk.W, pady=4)
+        tk.Button(self.master, textvariable=self.curlang.quit_button, command=self.master.destroy).grid(row=1, column=1, sticky=tk.W, pady=4)
 
     def config_window(self):
         t = tk.Toplevel(self)
@@ -153,7 +150,7 @@ class App(tk.Frame):
         # tk.Label(t, text=self.lang['cfg_out']).grid(row=0, column=0)
         # tk.Radiobutton(t, text=self.lang['cfg_out_vd'], variable=self.output_type, value='video').grid(row=0, column=1)
         # tk.Radiobutton(t, text=self.lang['cfg_out_aud'], variable=self.output_type, value='audio').grid(row=0, column=2)
-        tk.Label(t, text=self.curlang.cfg_out.get()).grid(row=0, column=0)
+        tk.Label(t, text=self.curlang.cfg_out).grid(row=0, column=0)
         tk.Radiobutton(t, textvariable=self.curlang.cfg_out_vd, variable=self.output_type, value='video').grid(row=0, column=1)
         tk.Radiobutton(t, textvariable=self.curlang.cfg_out_aud, variable=self.output_type, value='audio').grid(row=0, column=2)
 
@@ -175,7 +172,8 @@ class App(tk.Frame):
         self.settings['output_type'] = self.output_type.get()
         with open(os.path.join(self.dir, CONFIG_FILE), 'w') as f:
             toml.dump(self.settings, f)
-        self.init_gui(*args,**kwargs)
+        self.curlang.update(self.settings['language'])
+        #~ self.init_gui(*args,**kwargs)
 
     def downloader(self):
         videos = list(filter(None, self.entry.get("1.0", tk.END).splitlines()))
