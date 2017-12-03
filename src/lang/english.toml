@@ -20,3 +20,7 @@ cfg_out_vd = "Video"
 cfg_out_aud = "Audio-only"
 
 cfg_lang = "GUI language:"
+
+rclick_cut = "Cut"
+rclick_copy = "Copy"
+rclick_paste = "Paste"

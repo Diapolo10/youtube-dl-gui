@@ -1,9 +1,15 @@
 import tkinter as tk
 from functools import partial
+from pathlib import Path
+import os
+import toml
 
 class LangManager:
-    def __init__(self, parent, lang='english'):
+    def __init__(self, parent, home_dir, lang='english'):
         self.parent = parent
+        parent.language.trace('w', self.update)
+
+        self.load(home_dir)
 
         self.title = tk.StringVar()
         self.url_box = tk.StringVar()
@@ -28,17 +34,33 @@ class LangManager:
 
         self.cfg_lang = tk.StringVar()
 
-        self.update(lang)
+        self.rclick_cut = tk.StringVar()
+        self.rclick_copy = tk.StringVar()
+        self.rclick_paste = tk.StringVar()
 
-    def update(self, lang):
-        for key, value in self.parent.languages[lang].items():
+        self.update()
+
+    def load(self, home_dir):
+        self.languages = {}
+
+        language_pack_dir = os.path.join(home_dir, 'lang')
+        for filename in os.listdir(language_pack_dir):
+            lang_name = os.path.splitext(filename)[0]
+            data = toml.load(os.path.join(language_pack_dir, filename))
+            self.languages[lang_name] = data
+
+    def update(self, *args):
+        lang = self.parent.language.get()
+        for key, value in self.languages[lang].items():
             getattr(self, key).set(value)
+
+        tk._default_root.title(self.title.get()) # set the window title
 
 class LangMenu(tk.Menu):
     '''a new type of Menu that will accept tk.Variables as labels'''
     def __init__(self, master, **kwargs):
         tk.Menu.__init__(self, master, **kwargs)
-        self.last_index = 0
+        self.last_index = -1 if kwargs.get('tearoff') == 0 else 0
 
     def update_label(self, index, label, *trace_args):
         self.entryconfigure(index, label=label.get())
@@ -57,4 +79,16 @@ class LangMenu(tk.Menu):
     def add_cascade(self, *args, **kwargs):
         self.enhance(kwargs)
         tk.Menu.add_cascade(self, *args, **kwargs)
+
+    def add_checkbutton(self, *args, **kwargs):
+        self.enhance(kwargs)
+        tk.Menu.add_checkbutton(self, *args, **kwargs)
+
+    def add_radiobutton(self, *args, **kwargs):
+        self.enhance(kwargs)
+        tk.Menu.add_radiobutton(self, *args, **kwargs)
+
+    def add_separator(self, *args, **kwargs):
+        self.last_index += 1
+        tk.Menu.add_separator(self, *args, **kwargs)
 

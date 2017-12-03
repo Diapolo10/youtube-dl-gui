@@ -10,50 +10,45 @@ from tl_manager import LangManager, LangMenu
 
 CONFIG_FILE = "settings.toml"
 
-def rClicker(e):
-    """
-    Right click context menu for all tk.Entry and tk.Text widgets
-    """
 
-    try:
-        def rClick_Copy(e, apnd=0):
-            e.widget.event_generate('<Control-c>')
+'''
+* why are you laying everything out in self.master? The whole point of subclassing a Frame is to layout in self.
+* your rClickbinder function binds to the Text (good) and Entry, Listbox and Label class (why???)
+* try not to use names of built in function as variable names, like "dir"
+* I'm glad to see that you can split lines apart to make code more readable, but it's often better to make variables instead
+* use instance variables when you need to share data between methods, and not anywhere else
+* why toml and not a built in serialzer like json?
+'''
 
-        def rClick_Cut(e):
-            e.widget.event_generate('<Control-x>')
 
-        def rClick_Paste(e):
-            e.widget.event_generate('<Control-v>')
+# right click management; should probably be in it's own file since it's logically unrelated to anything here
 
-        e.widget.focus()
+class RightClickMenu(LangMenu):
+    def __init__(self, lang, *args, **kwargs):
+        LangMenu.__init__(self, None, tearoff=0, takefocus=0, **kwargs)
 
-        nclst=[
-               (' Cut', lambda e=e: rClick_Cut(e)),
-               (' Copy', lambda e=e: rClick_Copy(e)),
-               (' Paste', lambda e=e: rClick_Paste(e)),
-               ]
+        self.add_command(label=lang.rclick_cut, command=self.rClick_Cut)
+        self.add_command(label=lang.rclick_copy, command=self.rClick_Copy)
+        self.add_command(label=lang.rclick_paste, command=self.rClick_Paste)
 
-        rmenu = tk.Menu(None, tearoff=0, takefocus=0)
+        self.bind_class("Text", sequence='<Button-3>', func=self.popup, add='')
+        self.event = None
 
-        for (txt, cmd) in nclst:
-            rmenu.add_command(label=txt, command=cmd)
+    def popup(self, event):
+        self.event = event
+        self.event.widget.focus() # not really sure why this is needed.
+        self.tk_popup(event.x_root+40, event.y_root+10, entry="0")
 
-        rmenu.tk_popup(e.x_root+40, e.y_root+10,entry="0")
+    def rClick_Copy(self):
+        self.event.widget.event_generate('<Control-c>')
 
-    except TclError:
-        print(' - rClick menu, something wrong')
-        pass
-    return "break"
+    def rClick_Cut(self):
+        self.event.widget.event_generate('<Control-x>')
 
-def rClickbinder(r):
+    def rClick_Paste(self):
+        self.event.widget.event_generate('<Control-v>')
 
-    try:
-        for b in [ 'Text', 'Entry', 'Listbox', 'Label']: #
-            r.bind_class(b, sequence='<Button-3>',
-                         func=rClicker, add='')
-    except TclError:
-        print(' - rClickbinder, something wrong')
-        pass
+# end right click management code
 
 class MyLogger(object):
     def debug(self, msg):
@@ -65,115 +60,77 @@ class MyLogger(object):
     def error(self, msg):
         print(f"ERROR: {msg}")
 
-
 class App(tk.Frame):
-    def __init__(self, master=None, *args, **kwargs):
+    def __init__(self, master=None, **kwargs):
         tk.Frame.__init__(self, master, **kwargs)
-        rClickbinder(self.master)
-        self.languages = {}
-        self.init_gui(*args, **kwargs)
 
-    def init_gui(self, *args, **kwargs):
-        self.dir = Path(os.path.abspath(__file__)).parent
-        self.settings = toml.load(os.path.join(self.dir, CONFIG_FILE))
-        self.language_packs = os.path.join(self.dir, 'lang')
-        self.language = tk.StringVar()
-        self.language.set(self.settings['language'])
-        #self.lang = toml.load(
-        #    os.path.join(self.dir, "lang", f"{self.language.get()}.toml")
-        #)
-        for filename in os.listdir(self.language_packs):
-            self.languages[
-                '.'.join(filename.split('.')[:-1])
-                ] = toml.load(os.path.join(self.language_packs, filename))
-        self.curlang = LangManager(self, self.language.get())
-        self.savepath = self.settings.get('default_save_path')
-        if self.savepath == "":
-            self.savepath = os.path.join(self.dir, 'dl')
-        if not Path(self.savepath).exists():
-            os.makedirs(self.savepath)
+        # GUI init code here (no need for a method)
+        home_dir = Path(os.path.abspath(__file__)).parent
+        self.settings_file = os.path.join(home_dir, CONFIG_FILE)
+        self.settings = toml.load(self.settings_file)
 
-        print(self.languages)
-        # App settings
-        self.output_type = tk.StringVar()
-        self.output_type.set(self.settings.get('output_type', 'video'))
-        self.output_type.trace('w', self.config_update)
-
+        self.language = tk.StringVar(value=self.settings['language'])
         self.language.trace('w', self.config_update)
 
-        # Set window title
-        self.master.title(
-            #self.lang['title']
-            self.curlang.title.get()
-        )
+        self.curlang = LangManager(self, home_dir)
+        RightClickMenu(self.curlang)
+
+        savepath = self.settings.get('default_save_path')
+        if savepath == "":
+            savepath = os.path.join(home_dir, 'dl')
+        if not Path(savepath).exists():
+            os.makedirs(savepath)
+
+        # App settings
+        self.output_type = tk.StringVar(value = self.settings.get('output_type', 'video'))
+        self.output_type.trace('w', self.config_update)
 
         # Create toolbar
         toolbar = LangMenu(self.master)
         self.master.config(menu=toolbar)
 
         file_menu = LangMenu(toolbar)
-        # file_menu.add_command(label=self.lang['tb_file_cfg'], command=self.config_window)
-        # file_menu.add_command(label=self.lang['quit_button'], command=self.master.destroy)
-        # toolbar.add_cascade(label=self.lang['tb_file'], menu=file_menu)
         file_menu.add_command(label=self.curlang.tb_file_cfg, command=self.config_window)
         file_menu.add_command(label=self.curlang.quit_button, command=self.master.destroy)
         toolbar.add_cascade(label=self.curlang.tb_file, menu=file_menu)
 
         help_menu = LangMenu(toolbar)
-        # help_menu.add_command(label=self.lang['tb_help_about'], command=None)
-        # help_menu.add_command(label=self.lang['tb_help_usage'], command=None)
-        # help_menu.add_command(label=self.lang['tb_help_license'], command=None)
-        # toolbar.add_cascade(label=self.lang['tb_help'], menu=help_menu)
         help_menu.add_command(label=self.curlang.tb_help_about, command=None)
         help_menu.add_command(label=self.curlang.tb_help_usage, command=None)
         help_menu.add_command(label=self.curlang.tb_help_license, command=None)
         toolbar.add_cascade(label=self.curlang.tb_help, menu=help_menu)
 
+        lbl = tk.Label(self, textvariable=self.curlang.url_box)
+        lbl.pack(anchor=tk.W)
 
-        # Add buttons and text fields
-        # tk.Label(self.master, text=self.lang['url_box']).grid(row=0)
-        tk.Label(self.master, textvariable=self.curlang.url_box).grid(row=0)
-        self.entry = tk.Text(self.master)
-        #self.entry.bind('<Button-3>',rClicker, add='')
-        self.entry.grid(row=0, column=1)
+        self.entry = tk.Text(self)
+        self.entry.pack()
 
-        tk.Button(self.master, textvariable=self.curlang.dl_button, command=self.downloader).grid(row=1, column=0, sticky=tk.W, pady=4)
-        tk.Button(self.master, textvariable=self.curlang.quit_button, command=self.master.destroy).grid(row=1, column=1, sticky=tk.W, pady=4)
+        subframe = tk.Frame(self)
+        btn = tk.Button(subframe, textvariable=self.curlang.dl_button, command=self.downloader)
+        btn.pack(side=tk.LEFT)
+        btn = tk.Button(subframe, textvariable=self.curlang.quit_button, command=self.master.destroy)
+        btn.pack(side=tk.LEFT)
+        subframe.pack(anchor=tk.W)
 
     def config_window(self):
         t = tk.Toplevel(self)
-        # t.wm_title(self.lang['cfg_title'])
         t.wm_title(self.curlang.cfg_title.get())
         t.resizable(0, 0)
         t.grid()
 
-        # tk.Label(t, text=self.lang['cfg_out']).grid(row=0, column=0)
-        # tk.Radiobutton(t, text=self.lang['cfg_out_vd'], variable=self.output_type, value='video').grid(row=0, column=1)
-        # tk.Radiobutton(t, text=self.lang['cfg_out_aud'], variable=self.output_type, value='audio').grid(row=0, column=2)
-        tk.Label(t, text=self.curlang.cfg_out).grid(row=0, column=0)
+        tk.Label(t, textvariable=self.curlang.cfg_out).grid(row=0, column=0)
         tk.Radiobutton(t, textvariable=self.curlang.cfg_out_vd, variable=self.output_type, value='video').grid(row=0, column=1)
         tk.Radiobutton(t, textvariable=self.curlang.cfg_out_aud, variable=self.output_type, value='audio').grid(row=0, column=2)
 
-        # tk.Label(t, text=self.lang['cfg_lang']).grid(row=1, column=0)
         tk.Label(t, textvariable=self.curlang.cfg_lang).grid(row=1, column=0)
-        #self.temp_lang = tk.StringVar()
-        #self.temp_lang.set('English')
-        #self.temp_lang.trace('w', self.config_update)
-        #tk.OptionMenu(t, variable=self.temp_lang, *self.LANG_OPTIONS).grid(row=1, column=1)
-        tk.OptionMenu(t, self.language, *self.languages).grid(row=1, column=1)
+        tk.OptionMenu(t, self.language, *self.curlang.languages).grid(row=1, column=1)
 
-    def config_update(self, *args, **kwargs):
-        #print(args, kwargs)
-        #self.settings['language'] = self.LANG_OPTIONS.get(
-        #    self.temp_lang.get() if self.temp_lang.get() is not None else 'English',
-        #    'en'
-        #)
+    def config_update(self, *args):
         self.settings['language'] = self.language.get().lower()
         self.settings['output_type'] = self.output_type.get()
-        with open(os.path.join(self.dir, CONFIG_FILE), 'w') as f:
+        with open(self.settings_file, 'w') as f:
             toml.dump(self.settings, f)
-        self.curlang.update(self.settings['language'])
-        #~ self.init_gui(*args,**kwargs)
 
     def downloader(self):
         videos = list(filter(None, self.entry.get("1.0", tk.END).splitlines()))
@@ -193,18 +150,18 @@ class App(tk.Frame):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download(videos)
         if self.output_type.get() == "audio":
-            # print(self.lang['convert_complete'])
             print(self.curlang.convert_complete.get())
         self.entry.delete('1.0', tk.END)
 
     def my_hook(self, d):
         if d['status'] == 'finished':
-            # print(self.lang['dl_complete'])
             print(self.curlang.dl_complete.get())
         if d['status'] == 'downloading':
             print(d['filename'], d['_percent_str'], d['_eta_str'])
 
 
 if __name__ == "__main__":
-    App().mainloop()
-    sys.exit()
+    root = tk.Tk()
+    win = App(root)
+    win.pack()
+    root.mainloop()
