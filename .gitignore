@@ -49,3 +49,4 @@ Temporary Items
 # Files created by the application
 downloaded_songs.txt
 dl/
+__pycache__/
