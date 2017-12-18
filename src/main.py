@@ -75,11 +75,13 @@ class App(tk.Frame):
         self.curlang = LangManager(self, home_dir)
         RightClickMenu(self.curlang)
 
-        savepath = self.settings.get('default_save_path')
-        if savepath == "":
-            savepath = os.path.join(home_dir, 'dl')
-        if not Path(savepath).exists():
-            os.makedirs(savepath)
+        #self.grid()
+
+        self.savepath = self.settings.get('default_save_path')
+        if self.savepath == "":
+            self.savepath = os.path.join(home_dir, 'dl')
+        if not Path(self.savepath).exists():
+            os.makedirs(self.savepath)
 
         # App settings
         self.output_type = tk.StringVar(value = self.settings.get('output_type', 'video'))
@@ -101,16 +103,20 @@ class App(tk.Frame):
         toolbar.add_cascade(label=self.curlang.tb_help, menu=help_menu)
 
         lbl = tk.Label(self, textvariable=self.curlang.url_box)
-        lbl.pack(anchor=tk.W)
+        lbl.pack(anchor=tk.W, side=tk.LEFT)
+        #lbl.grid(row=0, column=0)
 
         self.entry = tk.Text(self)
         self.entry.pack()
+        #self.entry.grid(row=0, column=1)
 
         subframe = tk.Frame(self)
-        btn = tk.Button(subframe, textvariable=self.curlang.dl_button, command=self.downloader)
-        btn.pack(side=tk.LEFT)
-        btn = tk.Button(subframe, textvariable=self.curlang.quit_button, command=self.master.destroy)
-        btn.pack(side=tk.LEFT)
+        btn_dl = tk.Button(subframe, textvariable=self.curlang.dl_button, command=self.downloader)
+        btn_dl.pack(side=tk.LEFT)
+        #btn_dl.grid(row=1, column=0)
+        btn_close = tk.Button(subframe, textvariable=self.curlang.quit_button, command=self.master.destroy)
+        btn_close.pack(side=tk.LEFT)
+        #btn_close.grid(row=1, column=1)
         subframe.pack(anchor=tk.W)
 
     def config_window(self):

@@ -21,6 +21,6 @@ cfg_out_aud = "Pelkkä ääni"
 
 cfg_lang = "Käyttöliittymän kieli:"
 
-rclick_cut = "Cut tranlation"
-rclick_copy = "Copy tranlation"
-rclick_paste = "Paste tranlation"
+rclick_cut = "Leikkaa"
+rclick_copy = "Kopioi"
+rclick_paste = "Liitä"
