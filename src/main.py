@@ -97,8 +97,8 @@ class App(tk.Frame):
         toolbar.add_cascade(label=self.curlang.tb_file, menu=file_menu)
 
         help_menu = LangMenu(toolbar)
-        help_menu.add_command(label=self.curlang.tb_help_about, command=None)
-        help_menu.add_command(label=self.curlang.tb_help_usage, command=None)
+        help_menu.add_command(label=self.curlang.tb_help_about, command=self.about_window)
+        help_menu.add_command(label=self.curlang.tb_help_usage, command=self.help_window)
         help_menu.add_command(label=self.curlang.tb_help_license, command=None)
         toolbar.add_cascade(label=self.curlang.tb_help, menu=help_menu)
 
@@ -131,6 +131,21 @@ class App(tk.Frame):
 
         tk.Label(t, textvariable=self.curlang.cfg_lang).grid(row=1, column=0)
         tk.OptionMenu(t, self.language, *self.curlang.languages).grid(row=1, column=1)
+
+    def about_window(self):
+        window = tk.Toplevel(self)
+        window.wm_title(self.curlang.about_title.get())
+        window.resizable(0, 0)
+
+        tk.Label(window, textvariable=self.curlang.about_text).pack()
+
+    def help_window(self):
+        window = tk.Toplevel(self)
+        window.wm_title(self.curlang.help_title.get())
+        window.resizable(0, 0)
+
+        tk.Label(window, textvariable=self.curlang.help_text).pack()
+
 
     def config_update(self, *args):
         self.settings['language'] = self.language.get().lower()

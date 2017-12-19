@@ -18,6 +18,10 @@ class LangManager:
         self.dl_complete = tk.StringVar()
         self.convert_complete = tk.StringVar()
 
+        self.rclick_cut = tk.StringVar()
+        self.rclick_copy = tk.StringVar()
+        self.rclick_paste = tk.StringVar()
+
         self.tb_file = tk.StringVar()
         self.tb_file_cfg = tk.StringVar()
 
@@ -34,9 +38,12 @@ class LangManager:
 
         self.cfg_lang = tk.StringVar()
 
-        self.rclick_cut = tk.StringVar()
-        self.rclick_copy = tk.StringVar()
-        self.rclick_paste = tk.StringVar()
+        self.about_title = tk.StringVar()
+        self.about_text = tk.StringVar()
+
+        self.help_title = tk.StringVar()
+        self.help_text = tk.StringVar()
+
 
         self.update()
 
@@ -91,4 +98,3 @@ class LangMenu(tk.Menu):
     def add_separator(self, *args, **kwargs):
         self.last_index += 1
         tk.Menu.add_separator(self, *args, **kwargs)
-

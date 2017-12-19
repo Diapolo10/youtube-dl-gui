@@ -5,6 +5,10 @@ quit_button = "Sulje"
 dl_complete = "Lataus suoritettu, muutetaan tiedostomuotoa ..."
 convert_complete = "Tiedostomuoto muutettu onnistuneesti"
 
+rclick_cut = "Leikkaa"
+rclick_copy = "Kopioi"
+rclick_paste = "Liitä"
+
 tb_file = "Tiedosto"
 tb_file_cfg = "Asetukset"
 
@@ -21,6 +25,8 @@ cfg_out_aud = "Pelkkä ääni"
 
 cfg_lang = "Käyttöliittymän kieli:"
 
-rclick_cut = "Leikkaa"
-rclick_copy = "Kopioi"
-rclick_paste = "Liitä"
+about_title = "Tietoja"
+about_text = "Käyttöliittymän suunnitteli ja teki Lari Liuhamo. Sen alla ohjelman pitää kasassa Ricardo Garcian luoma työkalu Youtube-DL."
+
+help_title = "Käyttöohjeet"
+help_text = "Pikaopas\n\n\t1. Kopioi YouTube-videon verkko-osoite (Ctrl+C tai oikealla hiiren painikkeella)\n\t2. Liitä verkko-osoite tämän ohjelman tekstikenttään (Ctrl+V tai oikealla hiiren painikkeella)\n\t3. Jos haluat ladata useampia videoita, paina enteriä ja toista kohdat 1-3 kunnes kaikki verkko-osoitteet ovat omilla riveillään\n\t4. Klikkaa latausnappia ohjelman vasemmassa alalaidassa\n\t5. Ohjelman pitäisi nyt jäätyä, jos kaikki on kunnossa. Kun verkko-osoitteet katoavat ohjelman syöttökentästä, kaikki videot on ladattu."

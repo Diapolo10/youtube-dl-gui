@@ -5,6 +5,10 @@ quit_button = "Exit"
 dl_complete = "Done downloading, now converting ..."
 convert_complete = "File format converted successfully"
 
+rclick_cut = "Cut"
+rclick_copy = "Copy"
+rclick_paste = "Paste"
+
 tb_file = "File"
 tb_file_cfg = "Settings"
 
@@ -21,6 +25,8 @@ cfg_out_aud = "Audio-only"
 
 cfg_lang = "GUI language:"
 
-rclick_cut = "Cut"
-rclick_copy = "Copy"
-rclick_paste = "Paste"
+about_title = "About"
+about_text = "GUI written by Lari Liuhamo. Runs Youtube-DL under the hood, written by Ricardo Garcia."
+
+help_title = "Help"
+help_text = "Quick guide\n\n\t1. Copy a YouTube video URL\n\t2. Paste the URL on the text area of this program\n\t3. If you have more than one video to be downloaded, press enter and repeat the steps 1-3 until this is no longer the case\n\t4. Click the download button on the bottom\n\t5. If the program freezes, everything is going well. The moment the URLs disappear all videos have been downloaded (and converted, if you so chose)"
