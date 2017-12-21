@@ -1,4 +1,4 @@
-# youtube-dl-gui
+﻿# youtube-dl-gui
 A Tkinter-based GUI for the popular tool "youtube-dl"
 
 # Usage

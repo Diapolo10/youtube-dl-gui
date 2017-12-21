@@ -1,17 +1,17 @@
-@echo off
+Ôªø@echo off
 rem We won't be needing unnecessary output
 
 rem Enable UTF-8 character support
 chcp 65001
 
 rem Test special chars
-rem echo ÷YLƒTTI ˆrkkil‰
+rem echo √ñYL√ÑTTI √∂rkkil√§
 
 where /q python
 
 if ERRORLEVEL 1 (
     echo Larin videolataaja vaatii Python-tulkin version 3.6 tai uudemman. Asennathan sen ensin.
-    echo Asennuksen aikana tulee eteen pieni ruutu jonka vieress‰ lukee "Include in PATH" tai jotain. Varmista ett‰ t‰ss‰ ruudussa on oikeinmerkki!
+    echo Asennuksen aikana tulee eteen pieni ruutu jonka vieress√§ lukee "Include in PATH" tai jotain. Varmista ett√§ t√§ss√§ ruudussa on oikeinmerkki!
     echo Sen voi ladata osoitteesta: https://www.python.org/downloads/
     echo.
     exit /b 0
@@ -31,11 +31,11 @@ if ERRORLEVEL 1 (
 rem Check if git is installed
 where /q git
 if ERRORLEVEL 1 (
-    echo Ohjelmaa Git ei ole asennettu j‰rjestelm‰‰n, joten se asennetaan automaattisesti. Sit‰ k‰ytet‰‰n ohjelman automaattisiin p‰ivityksiin.
+    echo Ohjelmaa Git ei ole asennettu j√§rjestelm√§√§n, joten se asennetaan automaattisesti. Sit√§ k√§ytet√§√§n ohjelman automaattisiin p√§ivityksiin.
     echo.    
     rem Download and install Git
     call python -c "import os.path; import subprocess; import urllib.request; import shutil; from winreg import *; dl_dir = QueryValueEx(OpenKey(HKEY_CURRENT_USER, r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'), '{374DE290-123F-4565-9164-39C4925E467B}')[0]; shutil.copyfileobj(urllib.request.urlopen(r'https://github.com/git-for-windows/git/releases/download/v2.15.1.windows.2/Git-2.15.1.2-64-bit.exe'), open(os.path.join(dl_dir, 'git_installer.exe'), 'wb')); subprocess.Popen([os.path.join(dl_dir, 'git_installer.exe')])"
-    echo Git-ohjelman asennustyˆkalu on ladattu koneellesi, suoritathan sen asennuksen loppuun ennen kuin jatkat videolataajan asennusta.
+    echo Git-ohjelman asennusty√∂kalu on ladattu koneellesi, suoritathan sen asennuksen loppuun ennen kuin jatkat videolataajan asennusta.
     echo.
     set /p continue="Paina Enter, kun Git on asennettu."
     
@@ -68,10 +68,10 @@ call python -c "import os, winshell; from win32com.client import Dispatch; deskt
 if ERRORLEVEL 1 (
     echo Ongelma luodessa pikakuvakkeita!
 ) else (
-    echo Pikakuvakkeet luotu tyˆpˆyd‰lle
+    echo Pikakuvakkeet luotu ty√∂p√∂yd√§lle
 )
 
-echo Asennus valmis, k‰ynnistet‰‰n ohjelmaa...
+echo Asennus valmis, k√§ynnistet√§√§n ohjelmaa...
 echo %cd%
 start "%install_dir%\launcher\launcher.py"
 

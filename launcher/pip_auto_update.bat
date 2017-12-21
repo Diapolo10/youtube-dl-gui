@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 
 rem Define a (local) name for the temporary file
 setlocal
