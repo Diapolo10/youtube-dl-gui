@@ -1,5 +1,6 @@
 import sys
 import os
+import webbrowser
 from pathlib import Path
 import tkinter as tk
 from win32com.shell import shell, shellcon
@@ -102,7 +103,7 @@ class App(tk.Frame):
         help_menu = LangMenu(toolbar)
         help_menu.add_command(label=self.curlang.tb_help_about, command=self.about_window)
         help_menu.add_command(label=self.curlang.tb_help_usage, command=self.help_window)
-        help_menu.add_command(label=self.curlang.tb_help_license, command=None)
+        help_menu.add_command(label=self.curlang.tb_help_license, command=lambda: webbrowser.open_new(r'https://github.com/Diapolo10/youtube-dl-gui/blob/gramps/LICENSE'))
         toolbar.add_cascade(label=self.curlang.tb_help, menu=help_menu)
 
         lbl = tk.Label(self, textvariable=self.curlang.url_box)

@@ -1,7 +1,5 @@
-﻿import os
-import sys
+﻿import sys
 import subprocess
-import base64
 import requests
 from pathlib import Path
 
@@ -13,16 +11,16 @@ try:
     subprocess.call([str(curdir / "pip_auto_update.bat")])
 
     # Check version
-    url = r"https://raw.githubusercontent.com/Diapolo10/youtube-dl-gui/nightly/VERSION"
+    url = r"https://raw.githubusercontent.com/Diapolo10/youtube-dl-gui/gramps/VERSION"
     req = requests.get(url)
     github_version = req.text.strip()
     with open(rootdir / "VERSION") as f:
         local_version = f.read().strip()
 
     if local_version == github_version:
-        pass
+        print("Using latest version")
     else:
-        pass #TODO: Update repository
+        subprocess.call(["git clone -b gramps --single-branch 'https://github.com/Diapolo10/youtube-dl-gui'"], cwd=str(rootdir.parent))
 
     # Launch the program
     filepath = rootdir / "src" / "main.py"

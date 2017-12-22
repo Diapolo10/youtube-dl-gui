@@ -56,12 +56,25 @@ if ERRORLEVEL 1 (
     ver > nul
 ) else (
     echo Git on ilmeisesti jo asennettu. Loistavaa!
+    echo Luodaan Git-repoa...
     echo.
+
+    rem Move to install directory to handle Git commands
+    cd "%install_dir%\.."
+    git clone -b gramps --single-branch "https://github.com/Diapolo10/youtube-dl-gui"
+    cd "%mypath:~0,-1%"
 )
 
 
 
-xcopy /s /e /y /v /k /g "%mypath:~0,-1%"\..\* "%install_dir%"
+if not exist "C:\larin_ohjelmat\youtube-dl-gui" (
+    echo Päivitysten asennus epäonnistui, asennetaan suoraan levyltä...
+    echo.
+    xcopy /s /e /y /v /k /g "%mypath:~0,-1%"\..\* "%install_dir%"
+) else (
+    echo.
+)
+
 if ERRORLEVEL 1 (
     echo Problem!
     echo %ERRORLEVEL%
@@ -77,6 +90,7 @@ if ERRORLEVEL 1 (
     echo Pikakuvakkeet luotu työpöydälle
 )
 
+echo.
 echo Asennus valmis, löydät ohjelman työpöydältäsi!
 
 
