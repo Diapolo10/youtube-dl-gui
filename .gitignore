@@ -50,3 +50,4 @@ Temporary Items
 downloaded_songs.txt
 dl/
 __pycache__/
+*.ps1

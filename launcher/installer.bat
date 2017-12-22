@@ -1,11 +1,11 @@
-﻿@echo off
+@echo off
 rem We won't be needing unnecessary output
 
 rem Enable UTF-8 character support
 chcp 65001
 
-rem Test special chars
-rem echo ÖYLÄTTI örkkilä
+rem Define current directory path
+set mypath=%~dp0
 
 where /q python
 
@@ -32,13 +32,13 @@ rem Check if git is installed
 where /q git
 if ERRORLEVEL 1 (
     echo Ohjelmaa Git ei ole asennettu järjestelmään, joten se asennetaan automaattisesti. Sitä käytetään ohjelman automaattisiin päivityksiin.
-    echo.    
+    echo.
     rem Download and install Git
     call python -c "import os.path; import subprocess; import urllib.request; import shutil; from winreg import *; dl_dir = QueryValueEx(OpenKey(HKEY_CURRENT_USER, r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'), '{374DE290-123F-4565-9164-39C4925E467B}')[0]; shutil.copyfileobj(urllib.request.urlopen(r'https://github.com/git-for-windows/git/releases/download/v2.15.1.windows.2/Git-2.15.1.2-64-bit.exe'), open(os.path.join(dl_dir, 'git_installer.exe'), 'wb')); subprocess.Popen([os.path.join(dl_dir, 'git_installer.exe')])"
     echo Git-ohjelman asennustyökalu on ladattu koneellesi, suoritathan sen asennuksen loppuun ennen kuin jatkat videolataajan asennusta.
     echo.
     set /p continue="Paina Enter, kun Git on asennettu."
-    
+
     rem Reset ERRORLEVEL to 0
     ver > nul
 ) else (
@@ -55,7 +55,7 @@ if ERRORLEVEL 1 (
     ver > nul
 )
 
-xcopy /s /e /y /g "%cd%"\..\* "%install_dir%" 
+xcopy /s /e /y /v /k /g "%mypath:~0,-1%"\..\* "%install_dir%"
 if ERRORLEVEL 1 (
     echo Problem!
     echo %ERRORLEVEL%
@@ -72,7 +72,6 @@ if ERRORLEVEL 1 (
 )
 
 echo Asennus valmis, käynnistetään ohjelmaa...
-echo %cd%
 start "%install_dir%\launcher\launcher.py"
 
 exit /b 0
