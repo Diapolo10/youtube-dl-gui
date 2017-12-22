@@ -23,8 +23,8 @@ try:
         subprocess.call(["git clone -b gramps --single-branch 'https://github.com/Diapolo10/youtube-dl-gui'"], cwd=str(rootdir.parent))
 
     # Launch the program
-    filepath = rootdir / "src" / "main.py"
-    subprocess.Popen(["python", str(filepath)], cwd=str(filepath.parent))
+    filepath = rootdir / "src" / "main.pyw"
+    subprocess.Popen(["pythonw", str(filepath)], cwd=str(filepath.parent))
 
 except Exception as e:
     with open("error.log", 'a') as f:
