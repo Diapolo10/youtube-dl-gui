@@ -2,6 +2,7 @@ import sys
 import os
 from pathlib import Path
 import tkinter as tk
+from win32com.shell import shell, shellcon
 
 import toml
 import youtube_dl
@@ -9,6 +10,7 @@ import youtube_dl
 from tl_manager import LangManager, LangMenu
 
 CONFIG_FILE = "settings.toml"
+DESKTOP_PATH = shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, None, 0)
 
 
 '''
@@ -79,7 +81,8 @@ class App(tk.Frame):
 
         self.savepath = self.settings.get('default_save_path')
         if self.savepath == "":
-            self.savepath = os.path.join(home_dir, 'dl')
+            # self.savepath = os.path.join(home_dir, 'dl')
+            self.savepath = Path(DESKTOP_PATH) / "ladatut_videot"
         if not Path(self.savepath).exists():
             os.makedirs(self.savepath)
 

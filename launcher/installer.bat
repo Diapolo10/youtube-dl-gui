@@ -7,6 +7,19 @@ chcp 65001
 rem Define current directory path
 set mypath=%~dp0
 
+rem Get desktop location
+for /f "usebackq tokens=1,2,*" %%B IN (`reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v Desktop`) do set DESKTOP=%%D
+
+set install_dir="%systemdrive%\larin_ohjelmat\youtube-dl-gui"
+echo %install_dir%
+mkdir "%install_dir%"
+rem mkdir "%install_dir%\src\dl"
+mkdir "%DESKTOP%\ladatut_videot"
+if ERRORLEVEL 1 (
+    echo.
+    ver > nul
+)
+
 where /q python
 
 if ERRORLEVEL 1 (
@@ -46,14 +59,7 @@ if ERRORLEVEL 1 (
     echo.
 )
 
-set install_dir="%systemdrive%\larin_ohjelmat\youtube-dl-gui"
-echo %install_dir%
-mkdir "%install_dir%"
-mkdir "%install_dir%\src\dl"
-if ERRORLEVEL 1 (
-    echo.
-    ver > nul
-)
+
 
 xcopy /s /e /y /v /k /g "%mypath:~0,-1%"\..\* "%install_dir%"
 if ERRORLEVEL 1 (
@@ -64,14 +70,14 @@ if ERRORLEVEL 1 (
 )
 
 rem Create desktop shortcuts
-call python -c "import os, winshell; from win32com.client import Dispatch; desktop=winshell.desktop();path=os.path.join(desktop, 'Larin videolataaja.lnk'); wDir=r'C:\larin_ohjelmat\youtube-dl-gui\launcher'; target=f'{wDir}\\launcher.py'; target2=f'{wDir}\\src\\dl'; icon=f'{wDir}\\launcher.py'; shell=Dispatch('WScript.Shell'); shortcut=shell.CreateShortcut(path); shortcut.Targetpath=target; shortcut.WorkingDirectory=wDir; shortcut.IconLocation=icon; shortcut.save(); shortcut2=shell.CreateShortcut(path); shortcut2.Targetpath=target2; shortcut2.WorkingDirectory=f'{wDir}\\src\\dl'; shortcut2.save()"
+call python -c "import os, winshell; from win32com.client import Dispatch; desktop=winshell.desktop();path=os.path.join(desktop, 'Larin videolataaja.lnk'); wDir=r'C:\larin_ohjelmat\youtube-dl-gui\launcher'; target=f'{wDir}\\launcher.py'; icon=f'{wDir}\\launcher.py'; shell=Dispatch('WScript.Shell'); shortcut=shell.CreateShortcut(path); shortcut.Targetpath=target; shortcut.WorkingDirectory=wDir; shortcut.IconLocation=icon; shortcut.save();"
 if ERRORLEVEL 1 (
     echo Ongelma luodessa pikakuvakkeita!
 ) else (
     echo Pikakuvakkeet luotu työpöydälle
 )
 
-echo Asennus valmis, käynnistetään ohjelmaa...
-start "%install_dir%\launcher\launcher.py"
+echo Asennus valmis, löydät ohjelman työpöydältäsi!
+
 
 exit /b 0
