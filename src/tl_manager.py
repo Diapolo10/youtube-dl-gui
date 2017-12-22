@@ -12,6 +12,7 @@ class LangManager:
         self.load(home_dir)
 
         self.title = tk.StringVar()
+
         self.url_box = tk.StringVar()
         self.dl_button = tk.StringVar()
         self.quit_button = tk.StringVar()
