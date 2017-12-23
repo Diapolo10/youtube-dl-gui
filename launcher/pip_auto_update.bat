@@ -5,7 +5,7 @@ setlocal
 set temp="tmp.txt"
 
 rem Copy the list of outdated modules to a text file
-call pip list --outdated > %temp%
+call pip list --outdated --format=columns > %temp%
 
 rem Process the text file to only contain module names
 call python -c "m='\n'.join(map(lambda x: x.split()[0], open('%temp%', 'r').readlines())); open('%temp%', 'w').write(m)"

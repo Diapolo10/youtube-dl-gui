@@ -1375,12 +1375,12 @@
         1    0.000    0.000    0.000    0.000 macgamestore.py:7(MacGameStoreIE)
         1    0.000    0.000    0.000    0.000 mailru.py:13(MailRuIE)
         1    0.000    0.000    0.000    0.000 mailru.py:2(<module>)
-        1    0.000    0.000    3.732    3.732 main.py:1(<module>)
-        1    0.000    0.000    0.000    0.000 main.py:26(RightClickMenu)
-        1    0.000    0.000    0.004    0.004 main.py:27(__init__)
-        1    0.000    0.000    0.000    0.000 main.py:53(MyLogger)
-        1    0.000    0.000    0.000    0.000 main.py:63(App)
-        1    0.000    0.000    0.013    0.013 main.py:64(__init__)
+        1    0.000    0.000    3.732    3.732 main.pyw:1(<module>)
+        1    0.000    0.000    0.000    0.000 main.pyw:26(RightClickMenu)
+        1    0.000    0.000    0.004    0.004 main.pyw:27(__init__)
+        1    0.000    0.000    0.000    0.000 main.pyw:53(MyLogger)
+        1    0.000    0.000    0.000    0.000 main.pyw:63(App)
+        1    0.000    0.000    0.013    0.013 main.pyw:64(__init__)
         1    0.000    0.000    0.000    0.000 makerschannel.py:2(<module>)
         1    0.000    0.000    0.000    0.000 makerschannel.py:9(MakersChannelIE)
         1    0.000    0.000    0.000    0.000 makertv.py:2(<module>)
@@ -3072,5 +3072,3 @@
        38    0.000    0.000    0.000    0.000 {method 'upper' of 'str' objects}
        13    0.000    0.000    0.000    0.000 {method 'values' of 'dict' objects}
         2    0.000    0.000    0.000    0.000 {method 'values' of 'mappingproxy' objects}
-
-
