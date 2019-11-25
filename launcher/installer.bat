@@ -20,58 +20,23 @@ if ERRORLEVEL 1 (
     ver > nul
 )
 
-where /q python
+where /q py
 
 if ERRORLEVEL 1 (
     echo Larin videolataaja vaatii Python-tulkin version 3.6 tai uudemman. Asennathan sen ensin.
-    echo Asennuksen aikana tulee eteen pieni ruutu jonka vieressä lukee "Include in PATH" tai jotain. Varmista että tässä ruudussa on oikeinmerkki!
-    echo Sen voi ladata osoitteesta: https://www.python.org/downloads/
+    echo Sen voi ladata osoitteesta: https://www.python.org/downloads/release/python-380/
     echo.
     exit /b 0
 ) else (
     echo Python-asennus havaittu. Mainiota!
     echo.
-    call pip install winshell
+    call py -m pip install winshell
     if ERRORLEVEL 1 (
         echo Virhe asennettaessa Python-moduulia 'winshell'
         exit /b 0
     ) else (
         echo Python-moduuli winshell asennettu
     )
-    echo.
-)
-
-rem Check if git is installed
-where /q git
-if ERRORLEVEL 1 (
-    echo Ohjelmaa Git ei ole asennettu järjestelmään, joten se asennetaan automaattisesti. Sitä käytetään ohjelman automaattisiin päivityksiin.
-    echo.
-    rem Download and install Git
-    call python -c "import os.path; import subprocess; import urllib.request; import shutil; from winreg import *; dl_dir = QueryValueEx(OpenKey(HKEY_CURRENT_USER, r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'), '{374DE290-123F-4565-9164-39C4925E467B}')[0]; shutil.copyfileobj(urllib.request.urlopen(r'https://github.com/git-for-windows/git/releases/download/v2.15.1.windows.2/Git-2.15.1.2-64-bit.exe'), open(os.path.join(dl_dir, 'git_installer.exe'), 'wb')); subprocess.Popen([os.path.join(dl_dir, 'git_installer.exe')])"
-    echo Git-ohjelman asennustyökalu on ladattu koneellesi, suoritathan sen asennuksen loppuun ennen kuin jatkat videolataajan asennusta.
-    echo.
-    set /p continue="Paina Enter, kun Git on asennettu."
-
-    rem Reset ERRORLEVEL to 0
-    ver > nul
-) else (
-    echo Git on ilmeisesti jo asennettu. Loistavaa!
-    echo Luodaan Git-repoa...
-    echo.
-
-    rem Move to install directory to handle Git commands
-    cd "%install_dir%\.."
-    git clone -b gramps --single-branch "https://github.com/Diapolo10/youtube-dl-gui"
-    cd "%mypath:~0,-1%"
-)
-
-
-
-if not exist "C:\larin_ohjelmat\youtube-dl-gui" (
-    echo Päivitysten asennus epäonnistui, asennetaan suoraan levyltä...
-    echo.
-    xcopy /s /e /y /v /k /g "%mypath:~0,-1%"\..\* "%install_dir%"
-) else (
     echo.
 )
 

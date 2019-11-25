@@ -1,7 +1,6 @@
 import tkinter as tk
 from functools import partial
 from pathlib import Path
-import os
 import toml
 
 class LangManager:
@@ -51,10 +50,10 @@ class LangManager:
     def load(self, home_dir):
         self.languages = {}
 
-        language_pack_dir = os.path.join(home_dir, 'lang')
-        for filename in os.listdir(language_pack_dir):
-            lang_name = os.path.splitext(filename)[0]
-            data = toml.load(os.path.join(language_pack_dir, filename))
+        language_packs = Path(home_dir) / 'lang'
+        for file in language_packs.iterdir():
+            lang_name = file.stem
+            data = toml.load(language_packs / file.name)
             self.languages[lang_name] = data
 
     def update(self, *args):

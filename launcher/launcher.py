@@ -1,5 +1,4 @@
-﻿import sys
-import subprocess
+﻿import subprocess
 import requests
 from pathlib import Path
 
@@ -32,4 +31,3 @@ except Exception as e:
         f.write(f"{e}\n")
         f.write(f"\n{'='*20}\n\n")
 
-sys.exit()

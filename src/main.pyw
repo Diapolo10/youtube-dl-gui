@@ -1,5 +1,4 @@
 import sys
-import os
 import webbrowser
 from pathlib import Path
 import tkinter as tk
@@ -53,7 +52,7 @@ class RightClickMenu(LangMenu):
 
 # end right click management code
 
-class MyLogger(object):
+class MyLogger:
     def debug(self, msg):
         print(msg)
 
@@ -68,8 +67,8 @@ class App(tk.Frame):
         tk.Frame.__init__(self, master, **kwargs)
 
         # GUI init code here (no need for a method)
-        home_dir = Path(os.path.abspath(__file__)).parent
-        self.settings_file = os.path.join(home_dir, CONFIG_FILE)
+        home_dir = Path(__file__).parent
+        self.settings_file = home_dir / CONFIG_FILE
         self.settings = toml.load(self.settings_file)
 
         self.language = tk.StringVar(value=self.settings['language'])
@@ -82,10 +81,11 @@ class App(tk.Frame):
 
         self.savepath = self.settings.get('default_save_path')
         if self.savepath == "":
-            # self.savepath = os.path.join(home_dir, 'dl')
             self.savepath = Path(DESKTOP_PATH) / "ladatut_videot"
-        if not Path(self.savepath).exists():
-            os.makedirs(self.savepath)
+        else:
+            self.savepath = Path(self.savepath)
+        if not self.savepath.exists():
+            self.savepath.mkdir()
 
         # App settings
         self.output_type = tk.StringVar(value = self.settings.get('output_type', 'video'))
@@ -169,7 +169,7 @@ class App(tk.Frame):
             }] if self.output_type.get() == "audio" else [],
             'logger': MyLogger(),
             'progress_hooks': [self.my_hook],
-            'outtmpl': os.path.join(self.savepath, "%(title)s.%(ext)s"),
+            'outtmpl': str(self.savepath / "%(title)s.%(ext)s"),
             'download_archive': 'downloaded_songs.txt',
         }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
