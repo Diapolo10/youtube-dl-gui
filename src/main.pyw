@@ -8,19 +8,10 @@ import toml
 import youtube_dl
 
 from tl_manager import LangManager, LangMenu
+import ydl_config
 
 CONFIG_FILE = "settings.toml"
 DESKTOP_PATH = shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, None, 0)
-
-
-'''
-* why are you laying everything out in self.master? The whole point of subclassing a Frame is to layout in self.
-* your rClickbinder function binds to the Text (good) and Entry, Listbox and Label class (why???)
-* try not to use names of built in function as variable names, like "dir"
-* I'm glad to see that you can split lines apart to make code more readable, but it's often better to make variables instead
-* use instance variables when you need to share data between methods, and not anywhere else
-* why toml and not a built in serialzer like json?
-'''
 
 
 # right click management; should probably be in it's own file since it's logically unrelated to anything here
@@ -71,7 +62,7 @@ class App(tk.Frame):
         self.settings_file = home_dir / CONFIG_FILE
         self.settings = toml.load(self.settings_file)
 
-        self.language = tk.StringVar(value=self.settings['language'])
+        self.language = tk.StringVar(value=ydl_config.LANGUAGE)
         self.language.trace('w', self.config_update)
 
         self.curlang = LangManager(self, home_dir)
@@ -79,16 +70,13 @@ class App(tk.Frame):
 
         #self.grid()
 
-        self.savepath = self.settings.get('default_save_path')
-        if self.savepath == "":
-            self.savepath = Path(DESKTOP_PATH) / "ladatut_videot"
-        else:
-            self.savepath = Path(self.savepath)
+        self.savepath = ydl_config.DEFAULT_SAVE_PATH
+        
         if not self.savepath.exists():
             self.savepath.mkdir()
 
         # App settings
-        self.output_type = tk.StringVar(value = self.settings.get('output_type', 'video'))
+        self.output_type = tk.StringVar(value=ydl_config.OUTPUT_TYPE)
         self.output_type.trace('w', self.config_update)
 
         # Create toolbar
@@ -152,8 +140,8 @@ class App(tk.Frame):
 
 
     def config_update(self, *args):
-        self.settings['language'] = self.language.get().lower()
-        self.settings['output_type'] = self.output_type.get()
+        self.language = self.language.get().lower()
+        self.output_type = self.output_type.get()
         with open(self.settings_file, 'w') as f:
             toml.dump(self.settings, f)
 

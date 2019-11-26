@@ -1,4 +1,3 @@
-import contextlib
 import sqlite3
 import typing
 from pathlib import Path
@@ -18,10 +17,6 @@ def md5(filepath):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-with contextlib.closing(sqlite3.connect("test.db")) as db:
-    with open("config.sql") as f:
-        db.cursor().executescript(f.read())
-
 class Database:
     def __init__(self, db_config_path=DB_CONFIG_PATH, force_rerun_config=False):
         self.db_name = DB_NAME
@@ -29,17 +24,31 @@ class Database:
 
         run_db_config = force_rerun_config
         
-        if not (Path.cwd() / DB_NAME).exists():
+        if not (Path(__file__).parent / DB_NAME).exists():
             run_db_config = True
 
-        db = sqlite3.connect(DB_NAME)
-        self.cur = db.cursor()
+        self._db = sqlite3.connect(DB_NAME)
+        self._db.row_factory = sqlite3.Row
+        self.cur = self._db.cursor()
+
         if run_db_config:
             with open(self.db_config_file) as f:
                 self.cur.executescript(f.read())
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self):
+        self._db.close()
+
+
     def get_localisation(self, lang: str):
-        self.cur.execute("SELECT ui_element, ui_text, lang FROM ui_lang WHERE lang=?", (lang,))
+        
+        self.cur.execute(
+            "SELECT ui_element, ui_text, lang FROM ui_lang WHERE lang=?",
+            (lang,)
+        )
+        
         db_results: typing.List[typing.Tuple[str, str, str]] = self.cur.fetchall()
 
         if not db_results:
@@ -54,21 +63,35 @@ class Database:
 
 
     def check_url(self, url: str):
-        self.cur.execute("SELECT video_url, checksum FROM videos WHERE video_url=?", (url,))
-        video = self.cur.fetchone()
+        
+        self.cur.execute(
+            "SELECT video_url, checksum FROM videos WHERE video_url=?",
+            (url,)
+        )
+        
+        video: sqlite3.Row = self.cur.fetchone()
 
         if not video:
             return False
 
-        if not ydl_config.default_save_path.exists():
-            ydl_config.default_save_path.mkdir()
+        if not ydl_config.DEFAULT_SAVE_PATH.exists():
+            ydl_config.DEFAULT_SAVE_PATH.mkdir()
             return False
 
-        for file in ydl_config.default_save_path.iterdir():
-            if md5(file) == video[1]:
+        for file in ydl_config.DEFAULT_SAVE_PATH.iterdir():
+            if md5(file) == video['checksum']:
                 return True
         
         return False
+
+
+    def store_url(self, url: str, filepath: Path):
+        checksum = md5(filepath)
+
+        self.cur.execute(
+            "INSERT INTO videos (video_url, checksum) VALUES (?, ?)",
+            (url, checksum)
+        )
         
 
         
