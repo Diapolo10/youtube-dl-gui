@@ -61,42 +61,42 @@ INSERT INTO ui_lang (ui_element, ui_text) VALUES
 -- Finnish
 INSERT INTO ui_lang (ui_element, ui_text, lang) VALUES
     -- Program title
-    ("window_title", "YDL-videolataaja"),
+    ("window_title", "YDL-videolataaja", "finnish"),
 
     -- Main window
-    ("url_box", "Videoiden verkko-osoitteet"),
-    ("dl_button", "Lataa videot"),
-    ("quit_button", "Sulje"),
-    ("dl_complete", "Lataus suoritettu, muutetaan tiedostomuotoa..."),
-    ("convert_complete", "Video tallennettu onnistuneesti"),
+    ("url_box", "Videoiden verkko-osoitteet", "finnish"),
+    ("dl_button", "Lataa videot", "finnish"),
+    ("quit_button", "Sulje", "finnish"),
+    ("dl_complete", "Lataus suoritettu, muutetaan tiedostomuotoa...", "finnish"),
+    ("convert_complete", "Video tallennettu onnistuneesti", "finnish"),
 
     -- Context menu
-    ("rclick_cut", "Leikkaa"),
-    ("rclick_copy", "Kopioi"),
-    ("rclick_paste", "Liitä"),
+    ("rclick_cut", "Leikkaa", "finnish"),
+    ("rclick_copy", "Kopioi", "finnish"),
+    ("rclick_paste", "Liitä", "finnish"),
     
     -- Toolbar
         -- File menu
-        ("tb_file", "Tiedosto"),
-        ("tb_file_cfg", "Asetukset"),
+        ("tb_file", "Tiedosto", "finnish"),
+        ("tb_file_cfg", "Asetukset", "finnish"),
 
         -- Help menu
-        ("tb_help", "Ohje"),
-        ("tb_help_about", "Tietoja"),
-        ("tb_help_usage", "Käyttöohjeet"),
-        ("tb_help_license", "Lisenssi"),
+        ("tb_help", "Ohje", "finnish"),
+        ("tb_help_about", "Tietoja", "finnish"),
+        ("tb_help_usage", "Käyttöohjeet", "finnish"),
+        ("tb_help_license", "Lisenssi", "finnish"),
 
     -- Settings window
-    ("cfg_title", "YDL-asetukset"),
-    ("cfg_out", "Ladattu tiedostomuoto (video/ääni):"),
-    ("cfg_out_vd", "Video"),
-    ("cfg_out_aud", "Pelkkä ääni"),
-    ("cfg_lang", "Käyttöliittymän kieli:"),
+    ("cfg_title", "YDL-asetukset", "finnish"),
+    ("cfg_out", "Ladattu tiedostomuoto (video/ääni):", "finnish"),
+    ("cfg_out_vd", "Video", "finnish"),
+    ("cfg_out_aud", "Pelkkä ääni", "finnish"),
+    ("cfg_lang", "Käyttöliittymän kieli:", "finnish"),
 
     -- "About"-window
-    ("about_title", "Tietoja"),
-    ("about_text", "Käyttöliittymän suunnitteli ja teki Lari Liuhamo. Sen alla ohjelman pitää kasassa Ricardo Garcian luoma työkalu Youtube-DL."),
+    ("about_title", "Tietoja", "finnish"),
+    ("about_text", "Käyttöliittymän suunnitteli ja teki Lari Liuhamo. Sen alla ohjelman pitää kasassa Ricardo Garcian luoma työkalu Youtube-DL.", "finnish"),
     
     -- Help window
-    ("help_title", Käyttöohjeet"),
-    ("help_text", "Pikaopas\n\n\t1. Kopioi YouTube-videon verkko-osoite (Ctrl+C tai oikealla hiiren painikkeella)\n\t2. Liitä verkko-osoite tämän ohjelman tekstikenttään (Ctrl+V tai oikealla hiiren painikkeella)\n\t3. Jos haluat ladata useampia videoita, paina enteriä ja toista kohdat 1-3 kunnes kaikki verkko-osoitteet ovat omilla riveillään\n\t4. Klikkaa latausnappia ohjelman vasemmassa alalaidassa\n\t5. Ohjelman pitäisi nyt jäätyä, jos kaikki on kunnossa. Kun verkko-osoitteet katoavat ohjelman syöttökentästä, kaikki videot on ladattu.");
+    ("help_title", "Käyttöohjeet", "finnish"),
+    ("help_text", "Pikaopas\n\n\t1. Kopioi YouTube-videon verkko-osoite (Ctrl+C tai oikealla hiiren painikkeella)\n\t2. Liitä verkko-osoite tämän ohjelman tekstikenttään (Ctrl+V tai oikealla hiiren painikkeella)\n\t3. Jos haluat ladata useampia videoita, paina enteriä ja toista kohdat 1-3 kunnes kaikki verkko-osoitteet ovat omilla riveillään\n\t4. Klikkaa latausnappia ohjelman vasemmassa alalaidassa\n\t5. Ohjelman pitäisi nyt jäätyä, jos kaikki on kunnossa. Kun verkko-osoitteet katoavat ohjelman syöttökentästä, kaikki videot on ladattu.", "finnish");

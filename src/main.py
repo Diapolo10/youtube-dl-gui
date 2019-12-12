@@ -1,17 +1,15 @@
 import sys
+import tkinter as tk
 import webbrowser
 from pathlib import Path
-import tkinter as tk
-from win32com.shell import shell, shellcon
 
-import toml
 import youtube_dl
 
 from tl_manager import LangManager, LangMenu
 import ydl_config
 
-CONFIG_FILE = "settings.toml"
-DESKTOP_PATH = shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, None, 0)
+DESKTOP_PATH = Path.home() / 'Desktop'
+HOME_DIR = Path(__file__).parent
 
 
 # right click management; should probably be in it's own file since it's logically unrelated to anything here
@@ -20,9 +18,9 @@ class RightClickMenu(LangMenu):
     def __init__(self, lang, *args, **kwargs):
         LangMenu.__init__(self, None, tearoff=0, takefocus=0, **kwargs)
 
-        self.add_command(label=lang.rclick_cut, command=self.rClick_Cut)
-        self.add_command(label=lang.rclick_copy, command=self.rClick_Copy)
-        self.add_command(label=lang.rclick_paste, command=self.rClick_Paste)
+        self.add_command(label=lang.text['rclick_cut'], command=self.rClick_Cut)
+        self.add_command(label=lang.text['rclick_copy'], command=self.rClick_Copy)
+        self.add_command(label=lang.text['rclick_paste'], command=self.rClick_Paste)
 
         self.bind_class("Text", sequence='<Button-3>', func=self.popup, add='')
         self.event = None
@@ -58,14 +56,12 @@ class App(tk.Frame):
         tk.Frame.__init__(self, master, **kwargs)
 
         # GUI init code here (no need for a method)
-        home_dir = Path(__file__).parent
-        self.settings_file = home_dir / CONFIG_FILE
-        self.settings = toml.load(self.settings_file)
+        self.settings_file = ydl_config.DEFAULT_SAVE_PATH
 
         self.language = tk.StringVar(value=ydl_config.LANGUAGE)
         self.language.trace('w', self.config_update)
 
-        self.curlang = LangManager(self, home_dir)
+        self.curlang = LangManager(self, HOME_DIR)
         RightClickMenu(self.curlang)
 
         #self.grid()
@@ -84,17 +80,17 @@ class App(tk.Frame):
         self.master.config(menu=toolbar)
 
         file_menu = LangMenu(toolbar)
-        file_menu.add_command(label=self.curlang.tb_file_cfg, command=self.config_window)
-        file_menu.add_command(label=self.curlang.quit_button, command=self.master.destroy)
-        toolbar.add_cascade(label=self.curlang.tb_file, menu=file_menu)
+        file_menu.add_command(label=self.curlang.text['tb_file_cfg'], command=self.config_window)
+        file_menu.add_command(label=self.curlang.text['quit_button'], command=self.master.destroy)
+        toolbar.add_cascade(label=self.curlang.text['tb_file'], menu=file_menu)
 
         help_menu = LangMenu(toolbar)
-        help_menu.add_command(label=self.curlang.tb_help_about, command=self.about_window)
-        help_menu.add_command(label=self.curlang.tb_help_usage, command=self.help_window)
-        help_menu.add_command(label=self.curlang.tb_help_license, command=lambda: webbrowser.open_new(r'https://github.com/Diapolo10/youtube-dl-gui/blob/gramps/LICENSE'))
-        toolbar.add_cascade(label=self.curlang.tb_help, menu=help_menu)
+        help_menu.add_command(label=self.curlang.text['tb_help_about'], command=self.about_window)
+        help_menu.add_command(label=self.curlang.text['tb_help_usage'], command=self.help_window)
+        help_menu.add_command(label=self.curlang.text['tb_help_license'], command=lambda: webbrowser.open_new(r'https://github.com/Diapolo10/youtube-dl-gui/blob/gramps/LICENSE'))
+        toolbar.add_cascade(label=self.curlang.text['tb_help'], menu=help_menu)
 
-        lbl = tk.Label(self, textvariable=self.curlang.url_box)
+        lbl = tk.Label(self, textvariable=self.curlang.text['url_box'])
         lbl.pack(anchor=tk.W, side=tk.LEFT)
         #lbl.grid(row=0, column=0)
 
@@ -103,47 +99,47 @@ class App(tk.Frame):
         #self.entry.grid(row=0, column=1)
 
         subframe = tk.Frame(self)
-        btn_dl = tk.Button(subframe, textvariable=self.curlang.dl_button, command=self.downloader)
+        btn_dl = tk.Button(subframe, textvariable=self.curlang.text['dl_button'], command=self.downloader)
         btn_dl.pack(side=tk.LEFT)
         #btn_dl.grid(row=1, column=0)
-        btn_close = tk.Button(subframe, textvariable=self.curlang.quit_button, command=self.master.destroy)
+        btn_close = tk.Button(subframe, textvariable=self.curlang.text['quit_button'], command=self.master.destroy)
         btn_close.pack(side=tk.LEFT)
         #btn_close.grid(row=1, column=1)
         subframe.pack(anchor=tk.W)
 
     def config_window(self):
         t = tk.Toplevel(self)
-        t.wm_title(self.curlang.cfg_title.get())
+        t.wm_title(self.curlang.text['cfg_title'].get())
         t.resizable(0, 0)
         t.grid()
 
-        tk.Label(t, textvariable=self.curlang.cfg_out).grid(row=0, column=0)
-        tk.Radiobutton(t, textvariable=self.curlang.cfg_out_vd, variable=self.output_type, value='video').grid(row=0, column=1)
-        tk.Radiobutton(t, textvariable=self.curlang.cfg_out_aud, variable=self.output_type, value='audio').grid(row=0, column=2)
+        tk.Label(t, textvariable=self.curlang.text['cfg_out']).grid(row=0, column=0)
+        tk.Radiobutton(t, textvariable=self.curlang.text['cfg_out_vd'], variable=self.output_type, value='video').grid(row=0, column=1)
+        tk.Radiobutton(t, textvariable=self.curlang.text['cfg_out_aud'], variable=self.output_type, value='audio').grid(row=0, column=2)
 
-        tk.Label(t, textvariable=self.curlang.cfg_lang).grid(row=1, column=0)
+        tk.Label(t, textvariable=self.curlang.text['cfg_lang']).grid(row=1, column=0)
         tk.OptionMenu(t, self.language, *self.curlang.languages).grid(row=1, column=1)
 
     def about_window(self):
         window = tk.Toplevel(self)
-        window.wm_title(self.curlang.about_title.get())
+        window.wm_title(self.curlang.text['about_title'].get())
         window.resizable(0, 0)
 
-        tk.Label(window, textvariable=self.curlang.about_text).pack()
+        tk.Label(window, textvariable=self.curlang.text['about_text']).pack()
 
     def help_window(self):
         window = tk.Toplevel(self)
-        window.wm_title(self.curlang.help_title.get())
+        window.wm_title(self.curlang.text['help_title'].get())
         window.resizable(0, 0)
 
-        tk.Label(window, textvariable=self.curlang.help_text).pack()
+        tk.Label(window, textvariable=self.curlang.text['help_text']).pack()
 
 
     def config_update(self, *args):
         self.language = self.language.get().lower()
         self.output_type = self.output_type.get()
-        with open(self.settings_file, 'w') as f:
-            toml.dump(self.settings, f)
+        # with open(self.settings_file, 'w') as f:
+        #     toml.dump(self.settings, f)
 
     def downloader(self):
         videos = list(filter(None, self.entry.get("1.0", tk.END).splitlines()))
@@ -163,18 +159,23 @@ class App(tk.Frame):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download(videos)
         if self.output_type.get() == "audio":
-            print(self.curlang.convert_complete.get())
+            print(self.curlang.text['convert_complete'].get())
         self.entry.delete('1.0', tk.END)
 
     def my_hook(self, d):
         if d['status'] == 'finished':
-            print(self.curlang.dl_complete.get())
+            print(self.curlang.text['dl_complete'].get())
         if d['status'] == 'downloading':
             print(d['filename'], d['_percent_str'], d['_eta_str'])
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    win = App(root)
-    win.pack()
-    root.mainloop()
+    try:
+        root = tk.Tk()
+        win = App(root)
+        win.pack()
+        root.mainloop()
+    except Exception as e:
+        import time
+        print(e)
+        time.sleep(1000)

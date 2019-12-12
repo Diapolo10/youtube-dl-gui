@@ -1,67 +1,33 @@
 import tkinter as tk
 from functools import partial
 from pathlib import Path
-import toml
+
+from database import Database
 
 class LangManager:
     def __init__(self, parent, home_dir, lang='english'):
         self.parent = parent
-        parent.language.trace('w', self.update)
+        self.parent.language.trace('w', self.update)
 
-        self.load(home_dir)
 
-        self.title = tk.StringVar()
+        with Database() as db:
+            self._text = db.get_localisation(lang)
+            self.languages = db.get_languages()
 
-        self.url_box = tk.StringVar()
-        self.dl_button = tk.StringVar()
-        self.quit_button = tk.StringVar()
-        self.dl_complete = tk.StringVar()
-        self.convert_complete = tk.StringVar()
-
-        self.rclick_cut = tk.StringVar()
-        self.rclick_copy = tk.StringVar()
-        self.rclick_paste = tk.StringVar()
-
-        self.tb_file = tk.StringVar()
-        self.tb_file_cfg = tk.StringVar()
-
-        self.tb_help = tk.StringVar()
-        self.tb_help_about = tk.StringVar()
-        self.tb_help_usage = tk.StringVar()
-        self.tb_help_license = tk.StringVar()
-
-        self.cfg_title = tk.StringVar()
-
-        self.cfg_out = tk.StringVar()
-        self.cfg_out_vd = tk.StringVar()
-        self.cfg_out_aud = tk.StringVar()
-
-        self.cfg_lang = tk.StringVar()
-
-        self.about_title = tk.StringVar()
-        self.about_text = tk.StringVar()
-
-        self.help_title = tk.StringVar()
-        self.help_text = tk.StringVar()
-
+        self.text = {key: tk.StringVar() for key in self._text}
 
         self.update()
 
-    def load(self, home_dir):
-        self.languages = {}
-
-        language_packs = Path(home_dir) / 'lang'
-        for file in language_packs.iterdir():
-            lang_name = file.stem
-            data = toml.load(language_packs / file.name)
-            self.languages[lang_name] = data
-
     def update(self, *args):
         lang = self.parent.language.get()
-        for key, value in self.languages[lang].items():
-            getattr(self, key).set(value)
 
-        tk._default_root.title(self.title.get()) # set the window title
+        with Database() as db:
+            self._text = db.get_localisation(lang)
+
+        for key, value in self._text.items():
+            self.text[key].set(value)
+
+        tk._default_root.title(self.text['window_title'].get()) # set the window title
 
 class LangMenu(tk.Menu):
     '''a new type of Menu that will accept tk.Variables as labels'''

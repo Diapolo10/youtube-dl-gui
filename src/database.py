@@ -38,7 +38,7 @@ class Database:
     def __enter__(self):
         return self
 
-    def __exit__(self):
+    def __exit__(self, *args, **kwargs):
         self._db.close()
 
 
@@ -60,6 +60,14 @@ class Database:
             results[elem] = text
 
         return results
+
+    def get_languages(self):
+
+        self.cur.execute(
+            "SELECT DISTINCT lang FROM ui_lang"
+        )
+
+        return [value[0] for value in self.cur.fetchall()]
 
 
     def check_url(self, url: str):
